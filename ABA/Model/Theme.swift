@@ -7,3 +7,8 @@ struct Theme: Identifiable {
     var themeImage: String
 }
 
+struct CustomTheme: Identifiable {
+    var id = UUID()
+    var Image: Image
+    var ThemeName: String
+}

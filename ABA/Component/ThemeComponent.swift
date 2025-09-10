@@ -14,10 +14,13 @@ struct ThemeComponent: View {
         Theme(themeName: "Train", themeImage: "Train")
         
     ]
+    
     @Binding var mytheme: String
     @State private var selectedPhotoItem: PhotosPickerItem?
     @State private var selectImage: Image?
     @Binding var customImage: Image?
+    @State private var isCustomed = false
+    
     
     var body: some View {
         VStack{
@@ -46,9 +49,12 @@ struct ThemeComponent: View {
             ScrollView(.horizontal){
                 HStack(spacing: 20){
                     ForEach(themes){theme in
-                        let isSelected = (mytheme == theme.themeImage)
+                        let isSelected = (mytheme == theme.themeImage) && !isCustomed
+                        
                         Button{
                             mytheme = theme.themeImage
+                            customImage = nil
+                            isCustomed = false
                         }label: {
                             VStack{
                                 Image(theme.themeImage)
@@ -69,57 +75,64 @@ struct ThemeComponent: View {
                         }
                     }
                     PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
-                            if let image = selectImage {
-                                VStack{
-                                    image
-                                        .resizable()
-                                        .scaledToFill()
-                                        .frame(width: 140, height: 200)
-                                        .cornerRadius(20)
-                                        .overlay {
-                                            RoundedRectangle(
-                                                cornerRadius: 20,
-                                                style: .continuous
-                                            ).stroke(.white, lineWidth: 8)
-                                        }
-                                    Text("Custom theme")
+                        VStack{
+                        if let image = selectImage {
+                            VStack{
+                                image
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 140, height: 200)
+                                    .cornerRadius(20)
+                                    .overlay {
+                                        RoundedRectangle(
+                                            cornerRadius: 20,
+                                            style: .continuous
+                                        ).stroke(isCustomed ? .blue : .white, lineWidth: 8)
+                                    }
+                                Text("Custom theme")
+                                    .font(.title2)
+                                    .foregroundStyle(.gray)
+                            }
+                        } else {
+                            VStack{
+                                Image(systemName: "paintbrush")
+                                    .foregroundStyle(.gray)
+                                    .font(.title)
+                                    .frame(width: 140, height: 200)
+                                    .cornerRadius(20)
+                                    .overlay {
+                                        RoundedRectangle(
+                                            cornerRadius: 20,
+                                            style: .continuous
+                                        ).stroke(.white, lineWidth: 8)
+                                    }
+                                HStack{
+                                    Text("Choose")
                                         .font(.title2)
                                         .foregroundStyle(.gray)
+                                    Image(systemName: "photo.badge.magnifyingglass")
+                                        .foregroundStyle(.gray)
                                 }
-                            } else {
-                                VStack{
-                                    Text("")
-                                        .frame(width: 140, height: 200)
-                                        .cornerRadius(20)
-                                        .overlay {
-                                            RoundedRectangle(
-                                                cornerRadius: 20,
-                                                style: .continuous
-                                            ).stroke(.white, lineWidth: 8)
-                                        }
-                                    HStack{
-                                        Text("Choose")
-                                            .font(.title2)
-                                            .foregroundStyle(.gray)
-                                        Image(systemName: "photo.badge.magnifyingglass")
-                                        .onChange(of: selectedPhotoItem) { oldValue, newValue in
-                                            Task {
-                                                if let data = try? await newValue?.loadTransferable(type: Data.self ){
-                                                    if let uiImage = UIImage(data: data) {
-                                                        selectImage = Image(uiImage: uiImage)
-                                                    }
-                                                }
-                                                
-                                            }
-                                        }
-                                    }
-                                    .padding(.vertical, 5)
-                                    .padding(.horizontal, 10)
-                                    .background(.white)
-                                    .cornerRadius(7)
-                                    
+                                .padding(.vertical, 5)
+                                .padding(.horizontal, 10)
+                                .background(.white)
+                                .cornerRadius(7)
+                                
+                            }
+                        }
+                    }.onChange(of: selectedPhotoItem) { oldValue, newValue in
+                        Task {
+                            if let data = try? await newValue?.loadTransferable(type: Data.self ){
+                                if let uiImage = UIImage(data: data) {
+                                    selectImage = Image(uiImage: uiImage)
+                                    customImage = Image(uiImage: uiImage)
+                                    isCustomed = true
+                                    mytheme = "Custom theme"
                                 }
                             }
+                            
+                        }
+                    }
                     }
                 }
                 .padding()
@@ -133,6 +146,7 @@ struct ThemeComponent: View {
 }
 
 #Preview {
-    ThemeComponent(mytheme: .constant("BonTeaySrey"))
+    ThemeComponent(mytheme: .constant("BonTeaySrey"),
+                   customImage: .constant(nil))
 }
 

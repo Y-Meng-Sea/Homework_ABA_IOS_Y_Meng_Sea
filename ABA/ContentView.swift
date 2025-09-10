@@ -4,12 +4,19 @@ struct ContentView: View {
     @State private var isShowTheme = false
     @State var choosenTheme: String = "BonTeaySrey"
     @State var customTheme: Image?
+    
     var body: some View {
             ZStack{
                 // background Image
-                Image(choosenTheme)
-                    .resizable()
-                    .ignoresSafeArea()
+                if let customThemeImage = customTheme {
+                    customThemeImage
+                        .resizable()
+                        .ignoresSafeArea()
+                }else {
+                    Image(choosenTheme)
+                        .resizable()
+                        .ignoresSafeArea()
+                }
                 
                 VStack{
                     // profile section
@@ -86,7 +93,7 @@ struct ContentView: View {
                                 .cornerRadius(50)
                                 .foregroundStyle(Color(.gray).opacity(0.7))
                             }.sheet(isPresented: $isShowTheme) {
-                                ThemeComponent(mytheme: $choosenTheme)
+                                ThemeComponent(mytheme: $choosenTheme, customImage: $customTheme)
                                     .presentationDetents([.medium, .large])
                             }
                             
