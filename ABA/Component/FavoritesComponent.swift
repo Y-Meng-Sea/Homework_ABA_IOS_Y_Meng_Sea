@@ -18,6 +18,7 @@ struct FavoritesComponent: View {
                                     Circle().stroke(Color.gray, lineWidth: 2)
                                 }
                             Text(favorite)
+                                .foregroundStyle(.black)
                         }
                         .frame(maxWidth: .infinity, maxHeight: .infinity , alignment: .topLeading)
                         .padding()

@@ -11,6 +11,7 @@ struct OptionsComponent: View {
     ]
     
     let columns = Array(repeating: GridItem(.flexible()), count: 3)
+    @Environment(\.colorScheme) private var colorSheme
     
     var body: some View {
         LazyVGrid(columns: columns) {
@@ -22,6 +23,7 @@ struct OptionsComponent: View {
                             .scaledToFit()
                             .frame(width: geo.size.width / 2, height: geo.size.width / 2 )
                         Text(option.serviceName)
+                            .foregroundStyle(.black)
                     }
                     .frame(width: geo.size.width, height: geo.size.width)
                     .background(.white)
