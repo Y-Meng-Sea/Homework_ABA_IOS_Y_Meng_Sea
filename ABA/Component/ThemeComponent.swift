@@ -12,15 +12,12 @@ struct ThemeComponent: View {
         Theme(themeName: "Khmer Heritage", themeImage: "Khmer Heritage"),
         Theme(themeName: "Moon Night", themeImage: "Moon Night"), Theme(themeName: "Sunset", themeImage: "Sunset"),
         Theme(themeName: "Train", themeImage: "Train")
-        
     ]
-    
     @Binding var mytheme: String
     @State private var selectedPhotoItem: PhotosPickerItem?
     @State private var selectImage: Image?
     @Binding var customImage: Image?
     @State private var isCustomed = false
-    
     
     var body: some View {
         VStack{
@@ -76,6 +73,7 @@ struct ThemeComponent: View {
                     }
                     PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
                         VStack{
+                            // preview image is there are an image
                         if let image = selectImage {
                             VStack{
                                 image
@@ -94,6 +92,7 @@ struct ThemeComponent: View {
                                     .foregroundStyle(.gray)
                             }
                         } else {
+                            // display somethine else if image is nill
                             VStack{
                                 Image(systemName: "paintbrush")
                                     .foregroundStyle(.gray)
